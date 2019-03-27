@@ -100,3 +100,60 @@ const beaconMessageData = {
 };
 hb('send', '<MESSAGE_TYPE>', beaconMessageData);
 ```
+
+## More Advanced
+```
+<script>
+    window.onerror = function (message, file, line, col, error) {
+        console.log(message, "from", error.stack);
+        let hrbrBeaconMsg = {
+          message: message,
+          file: file,
+          line: line,
+          col: col,
+          error: error
+        };
+        hb('send', "error", hrbrBeaconMsg);
+    };
+    window.addEventListener("error", function (e) {
+        console.log(e.error.message, "from", e.error.stack);
+        let hrbrBeaconMsg = {
+          message: e.error.message,
+          error: e.error.stack
+        };
+        hb('send', "error", hrbrBeaconMsg);
+    })
+    $( document ).ready(function() {
+        if( !$.cookie("hrbr") ) {
+            $.cookie("hrbr", uuidv4(), { expires : 1 });
+        }
+        let hrbrBeaconMsg = {
+          sessionId: $.cookie("hrbr"),
+          location: $(location).attr('href'),
+          width: $(window).width(),
+          height: $(window).height(),
+          performance: window.performance,
+          browser: navigator.userAgent.toLowerCase()
+        };
+        hb('send', 'pageload', hrbrBeaconMsg);
+    });
+    $(document).on("click mousedown mouseup focus blur keydown change click dblclick keydown keyup keypress textInput touchstart touchmove touchend touchcancel resize zoom focus blur select change submit reset",function(e){
+        let hrbrBeaconMsg = {
+          sessionId: $.cookie("hrbr"),
+          target: e.target.href,
+          x: e.originalEvent.clientX,
+          y: e.originalEvent.clientY,
+          width: $(window).width(),
+          height: $(window).height()
+        };
+        hb('send', e.type, hrbrBeaconMsg);
+    });
+    function uuidv4() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+</script>
+
+```
