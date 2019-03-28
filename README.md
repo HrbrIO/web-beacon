@@ -102,7 +102,10 @@ hb('send', '<MESSAGE_TYPE>', beaconMessageData);
 ```
 
 ## More Advanced
+NOTE: Requires jQuery and cookies support
 ```
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script>
     window.onerror = function (message, file, line, col, error) {
         console.log(message, "from", error.stack);
@@ -122,13 +125,13 @@ hb('send', '<MESSAGE_TYPE>', beaconMessageData);
           error: e.error.stack
         };
         hb('send', "error", hrbrBeaconMsg);
-    })
+    });
     $( document ).ready(function() {
-        if( !$.cookie("hrbr") ) {
-            $.cookie("hrbr", uuidv4(), { expires : 1 });
+        if( !Cookies.get("hrbr") ) {
+            Cookies.set("hrbr", uuidv4(), { expires : 1 });
         }
         let hrbrBeaconMsg = {
-          sessionId: $.cookie("hrbr"),
+          sessionId: Cookies.get("hrbr"),
           location: $(location).attr('href'),
           width: $(window).width(),
           height: $(window).height(),
@@ -139,7 +142,7 @@ hb('send', '<MESSAGE_TYPE>', beaconMessageData);
     });
     $(document).on("click mousedown mouseup focus blur keydown change click dblclick keydown keyup keypress textInput touchstart touchmove touchend touchcancel resize zoom focus blur select change submit reset",function(e){
         let hrbrBeaconMsg = {
-          sessionId: $.cookie("hrbr"),
+          sessionId: Cookies.get("hrbr"),
           target: e.target.href,
           x: e.originalEvent.clientX,
           y: e.originalEvent.clientY,
